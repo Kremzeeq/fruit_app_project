@@ -7,7 +7,7 @@
 This web application renders a homepage with a Bootstrap carousel of 5 random fruit 
 and related facts.
 
-###There are 2 key modules to this project:
+### There are 2 key modules to this project:
 
 ### 1. [src/database_updater.py](https://github.com/Kremzeeq/fruit_app_project/blob/master/src/database.updater.py)
 
@@ -28,6 +28,26 @@ the fact and fruit models saved here: [src/models](https://github.com/Kremzeeq/f
 * This should be prior to executing `flask run` in the command line
 
 ## Deploying web application to remote virtual machine e.g. EC2 instance
+
+1. Once E2 instance is up and running, update the system:
+
+`sudo apt-get update`
+
+2.Next, clone the git hub project:
+
+`git clone https://github.com/Kremzeeq/fruit_app_project.git`
+
+3. Check for python3 version:
+
+`python3 -v`
+
+4. Install pip3:
+
+`sudo apt install python3-pip`
+
+5. Now, modules listed in [requirements.txt](https://github.com/Kremzeeq/fruit_app_project/blob/master/requirements.txt) can be installed:
+
+`pip3 install -r requirements.txt`
 
 
 
