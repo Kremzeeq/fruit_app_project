@@ -15,33 +15,26 @@ class DatabaseUpdater():
     by the fact and fruit models saved here: src/models
     They are then saved to the database.
     """
-    def __init__(self, fruit_csv_path):
+    def __init__(self, fruit_csv_path, db_instance):
         self.fruit_csv_path = fruit_csv_path
-        self.df = pd.read_csv(self.fruit_csv_path)
+        self.df = pd.read_csv(self.fruit_csv_path, engine='python')
+        self.db_instance = db_instance
 
     def execute(self):
-        result_dict = self.get_db_connection_result_dict()
-        if result_dict["success"]:
-            self.delete_collections_in_db(result_dict['result'])
-            if self.execute_fruit_section():
-                if self.execute_fact_section():
-                    self.final_notifcations()
+        self.delete_collections_in_db()
+        if self.execute_fruit_section():
+            if self.execute_fact_section():
+                self.final_notifcations()
 
+    def get_db_name(self):
+        print("Initialized database:", self.db_instance.name)
+        return self.db_instance.name
 
-    def get_db_connection_result_dict(self):
-        try:
-            db = Database.initialize()
-            print("Initialized database:", db.name)
-            return {"result": db, "success":True}
-        except Exception as e:
-            print("Error:", e)
-            return {"success": False}
-
-    def delete_collections_in_db(self, db):
-        collection_names = db.list_collection_names()
+    def delete_collections_in_db(self):
+        collection_names = self.db_instance.list_collection_names()
         print("Here are existing collections:", collection_names)
         for collection in collection_names:
-            db.drop_collection(collection)
+            self.db_instance.drop_collection(collection)
             print("Dropped collection:", collection)
         return True
 
@@ -117,7 +110,3 @@ class DatabaseUpdater():
         print("Afterwards this updater can be run to overwrite the database collections"
               " for the database configured for the project")
 
-
-FRUIT_CSV = './static/assets/data_source/fruit.csv'
-database_updater = DatabaseUpdater(FRUIT_CSV)
-database_updater.execute()

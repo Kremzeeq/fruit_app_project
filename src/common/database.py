@@ -4,9 +4,10 @@ class Database(object):
     DATABASE = None
 
     @staticmethod
-    def initialize():
-        client = MongoClient(host ='localhost', port=27017)
-        Database.DATABASE = client['celebration_of_fruit']
+    def initialize(database_uri, db_name):
+        client = MongoClient(database_uri)
+        # old port 27017
+        Database.DATABASE = client[db_name]
         return Database.DATABASE
 
     @staticmethod
