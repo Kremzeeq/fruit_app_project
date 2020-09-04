@@ -160,10 +160,14 @@ This is to overcome the warning: "WARNING: This is a development server. Do not 
 Use a production WSGI server instead." Basically, waitress functions as a WSGI server. More info can be found 
 [here](https://stackoverflow.com/questions/51025893/flask-at-first-run-do-not-use-the-development-server-in-a-production-environmen)
 
+7. we can check the instance is running by pasting the IPV4 public IP e.g. 35.154.90.20 in the browser with 
+the port number e.g. 8080
+
+`http://35.154.90.20:8080/`
 
 Running the application for the first time, will populate the database with information on fruit and facts. 
 
-7. Now, stop the flask instance. Execute the following to list system processes:
+8. Now, stop the flask instance. Execute the following to list system processes:
 
 `sudo netstat -lp`
 
@@ -172,22 +176,21 @@ This will show information for many applications, including python, such as in t
 Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name             
 tcp        2      0 localhost:5000          0.0.0.0:*               LISTEN      15726/python
 
-8. Considering the PID number above as 15726, the following command can be executed:
+9. Considering the PID number above as 15726, the following command can be executed:
 
 `sudo kill -9 15726`
 
-9. In the src directory, edit the config file so UPDATE_FRUIT_AND_FACTS is set to FALSE. 
+10. In the src directory, edit the config file so UPDATE_FRUIT_AND_FACTS is set to FALSE. 
 This is so the database will not be updated every time the application is run. 
 
 `sudo nano config.py`
 
-10. Now the the application can be run as a background process. 
+11. Now the the application can be run as a background process with '&'. 
 This is so the web application will still be available via the web, even if the terminal is closed:
 
 `flask run &`
 
-7. Finally, we can check the instance is running by pasting the IPV4 public IP e.g. 35.154.90.20 in the browser with 
-the port number e.g. 8080
+12. Time to check the instance is running again! This is regard to details as explained in step 7. 
 
 `http://35.154.90.20:8080/`
 
