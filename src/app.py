@@ -63,4 +63,4 @@ def home_template():
 
 
 if __name__ == '__main__':
-    serve(app.run(host=HOST, port=RUN_PORT))
+    serve(app, host=HOST, port=RUN_PORT)
