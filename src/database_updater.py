@@ -1,6 +1,5 @@
-from src.common.database import Database
-from src.models.fruit import Fruit
-from src.models.fact import Fact
+from models.fruit import Fruit
+from models.fact import Fact
 import pandas as pd
 import json
 
@@ -116,6 +115,7 @@ class DatabaseUpdater():
     def final_notifcations(self):
         print("Database update complete")
         print("New fruit and facts can be added to the CSV file:", self.fruit_csv_path)
-        print("Afterwards this updater can be run to overwrite the database collections"
-              " for the database configured for the project")
+        print("Afterwards app.py can be run to overwrite the database collections"
+              " for the database configured for the project. This is as long as "
+              "UPDATE_FRUIT_AND_FACTS is set to True in the config file")
 

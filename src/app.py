@@ -1,17 +1,21 @@
 from flask import Flask, render_template
-from src.common.database import Database
-from src.models.fruit import Fruit
-from src.models.fact import Fact
-from src.database_updater import DatabaseUpdater
+from common.database import Database
+from models.fruit import Fruit
+from models.fact import Fact
+from database_updater import DatabaseUpdater
+import config
 import os
 
 app = Flask(__name__)
 
+app.config["ENV"] = os.environ.get("FLASK_ENV")
 
 if app.config["ENV"] == "production":
-    app.config.from_object("src.config.ProductionConfig")
+    app.config.from_object(config.ProductionConfig)
+    #app.config.from_object("config.ProductionConfig")
 else:
-    app.config.from_object("src.config.DevelopmentConfig")
+    app.config.from_object(config.DevelopmentConfig)
+    #app.config.from_object("config.DevelopmentConfig")
 
 print(f'ENV is set to: {app.config["ENV"]}')
 

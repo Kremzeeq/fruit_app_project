@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from src.common.database import Database
+from common.database import Database
 
 class Model(metaclass=ABCMeta):
     collection: str

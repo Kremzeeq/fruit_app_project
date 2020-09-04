@@ -128,15 +128,9 @@ Please ensure this is done from within the src directory from where app.py will 
 `export FRUIT_APP_DB_USERNAME=fruit_app_user`
 `export FRUIT_APP_DB_PASSWORD=fruit123`
 
-2. Now let's export the FLASK_ENV and FLASK_RUN_PORT variables for production:
+2. Now let's export the FLASK_ENV variable for production:
 
 `export FLASK_ENV=production`
-`export FLASK_RUN_PORT=8080`
-`export FLASK_RUN_HOST=0.0.0.0`
-
-*Please note * : Setting the Port and Host in the config file doesn't seem to work with executing `flask run` 
-so we export this as a work-around. The default port is 5000. There are some ideas from the stackoverflow 
-community around this [here](https://stackoverflow.com/questions/20212894/how-do-i-get-flask-to-run-on-port-80)
 
 2. In the AWS EC2 console, select the fruit_app instance and 
 select the launch wizard listed under Security groups:
@@ -153,11 +147,13 @@ select the launch wizard listed under Security groups:
 
 5. In the EC2 instance, from the src directory, execute the following to run the mongo db instance as a background process:
 
-`nohup mongod --port 27017`
+`nohup mongod --port 27017 &`
+
+This creates a nohup.out file in the home directory. The & helps free up the terminal you are typing in.
 
 6. In a separate terminal from the src location, the python Flask application can also be run:
 
-`flask run`
+`python3 app.py`
 
 Running the application for the first time, will populate the database with information on fruit and facts. 
 

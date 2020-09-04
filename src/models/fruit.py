@@ -1,5 +1,5 @@
 import uuid
-from src.models.model import Model
+from .model import Model
 
 class Fruit(Model):
     collection = 'fruits'
