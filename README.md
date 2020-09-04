@@ -73,17 +73,24 @@ The purpose of this is to secure the MongoDB instance for the application.
 1. Create the path for storing the database data and set permission so yourself as a user can access it. 
 Let's call this terminal -'terminal 1':
 
-`sudo mkdir -p /data/db`
-`sudo chown $USER /data/db`
+```
+sudo mkdir -p /data/db
+sudo chown $USER /data/db
+```
 
 2. In another terminal - 'terminal 2' for the EC2 instance, start the mongod instance:
 
-`mongod --port 27017 --dbpath /data/db`
+```
+mongod --port 27017 --dbpath /data/db
+```
 
 3. In terminal 1, start up the Mongo shell, use the admin database
 
-`mongo --port 27017`
-`use admin`
+```
+mongo --port 27017
+use admin
+```
+
 
 4. Now, we can create an admin user with the userAdminAnyDatabase role. 
 This permission means that the admin can create and modify users and roles for 
@@ -91,7 +98,9 @@ any database available on the port.
 More information on MongoDB access privileges can be found [here](https://studio3t.com/knowledge-base/articles/mongodb-users-roles-explained-part-1/)
 
 
-`db.createUser({user: "admin", pwd: "adminUser123", roles: [{role: "userAdminAnyDatabase", db: "admin"}]})`
+```
+db.createUser({user: "admin", pwd: "adminUser123", roles: [{role: "userAdminAnyDatabase", db: "admin"}]})`
+```
 
 **NB** : Please provide username and password as per preferences. MongoDB encrypts the password within the database.
 
@@ -99,23 +108,31 @@ More information on MongoDB access privileges can be found [here](https://studio
 
 6. In terminal 1, restart the mongod instance with the --auth command:
 
-`mongod --auth --port 27017 --dbpath /data/db`
+```
+mongod --auth --port 27017 --dbpath /data/db`
+```
 
 7. In terminal 2, access the mongo instance with the admin login details:
 
-`mongo --port 27017 -u "admin" -p "adminUser123" --authenticationDatabase "admin"` 
+```
+mongo --port 27017 -u "admin" -p "adminUser123" --authenticationDatabase "admin"` 
+```
 
 8. The next step is to create a user with readWrite privileges for the production database, noted as 
 'celebration_of_fruit_production' in the config file. Again, set up the fruit_app_user credentials as seen fit
 and note the username and password will be required later:
 
-`use celebration_of_fruit_production`
-`db.createUser({user: "fruit_app_user", pwd: "fruit123", roles: [{role: "readWrite", db: "celebration_of_fruit_production"}]})`
+```
+use celebration_of_fruit_production
+db.createUser({user: "fruit_app_user", pwd: "fruit123", roles: [{role: "readWrite", db: "celebration_of_fruit_production"}]})
+```
 
 9. Please note the 'celebration_of_fruit_production' database can be directly
 read and written to using the fruit_app_user credentials in another instance:
 
-`mongo --port 27017 -u "fruit_app_user" -p "fruit123" --authenticationDatabase "celebration_of_fruit_production"`
+```
+mongo --port 27017 -u "fruit_app_user" -p "fruit123" --authenticationDatabase "celebration_of_fruit_production"
+```
 
 *NB* : Remember to quit the mongo and mongod instances with `Ctrl+C`
 
@@ -126,12 +143,16 @@ Please ensure this is done from within the src directory from where app.py will 
 
 1. First, let's export the fruit_app_user credentials
 
-`export FRUIT_APP_DB_USERNAME=fruit_app_user`
-`export FRUIT_APP_DB_PASSWORD=fruit123`
+```
+export FRUIT_APP_DB_USERNAME=fruit_app_user
+export FRUIT_APP_DB_PASSWORD=fruit123
+```
 
 2. Now let's export the FLASK_ENV variable for production:
 
-`export FLASK_ENV=production`
+```
+export FLASK_ENV=production
+```
 
 2. In the AWS EC2 console, select the fruit_app instance and 
 select the launch wizard listed under Security groups:
@@ -148,13 +169,17 @@ select the launch wizard listed under Security groups:
 
 5. In the EC2 instance, from the src directory, execute the following to run the mongo db instance as a background process:
 
-`nohup mongod --port 27017 &`
+```
+nohup mongod --port 27017 &
+```
 
 This creates a nohup.out file in the home directory. The & helps free up the terminal you are typing in.
 
 6. In a separate terminal from the src location, the python Flask application can also be run:
 
-`python3 app.py`
+```
+python3 app.py
+```
 
 **NB** : The waitress module is used within app.py to serve the application for production purposes. 
 This is to overcome the warning: "WARNING: This is a development server. Do not use it in a production deployment.
@@ -164,42 +189,58 @@ Use a production WSGI server instead." Basically, waitress functions as a WSGI s
 7. We can check the instance is running by pasting the IPV4 public IP e.g. 35.154.90.20 in the browser with 
 the port number e.g. 8080
 
-`http://35.154.90.20:8080/`
+```
+http://35.154.90.20:8080/
+```
 
 Running the application for the first time, will populate the database with information on fruit and facts. 
 
 8. Now, let's stop the flask instance. Execute the following to list system processes:
 
-`sudo netstat -lp`
+```
+sudo netstat -lp
+```
 
 This will show information for many applications, including python, such as in the example below:
 
+```
 Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name             
 tcp        2      0 localhost:5000          0.0.0.0:*               LISTEN      15726/python
+```
 
 9. Considering the PID number above as 15726, the following command can be executed:
 
-`sudo kill -9 15726`
+```
+sudo kill -9 15726
+```
 
 10. In the src directory, edit the config file so UPDATE_FRUIT_AND_FACTS is set to FALSE. 
 This is so the database will not be updated every time the application is run. 
 
-`sudo nano config.py`
+```
+sudo nano config.py
+```
 
 11. Now the the application can be run as a background process with 'nohup' and '&'. 
 This is so the web application will still be available via the web, even if the terminal is closed:
 
-`nohup python3 app.py &`
+```
+nohup python3 app.py &
+```
 
 12. Time to check the instance is running again! This is regard to details as explained in step 7. 
 
-`http://35.154.90.20:8080/`
+```
+http://35.154.90.20:8080/
+```
 
 ## Section 4: Stopping instances
 
 Whilst the EC2 instance can be stopped via the AWS console, the following command can help identify processes running 
 as background processes:
 
-`sudo netstat -lp`
+```
+sudo netstat -lp
+```
 
 The program numbers can be identified and killed by a similar process as explained in steps 8 and 9 in Section 3. 
