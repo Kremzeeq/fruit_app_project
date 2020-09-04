@@ -12,10 +12,9 @@ and related facts.
 ### 1. [src/app.py](https://github.com/Kremzeeq/fruit_app_project/blob/master/src/app.py)
 
 * This main module is configured to [src/config.py](https://github.com/Kremzeeq/fruit_app_project/blob/master/src/config.py)
-* A FLASK_ENV variable should be exported as 'development' or 'production' e.g.  
+* A FLASK_ENV variable should be exported as 'development' for the localhost or 'production' for deployment purposes e.g.  
 `export FLASK_ENV=production`
-* This should be prior to executing `flask run` in the command line
-
+* Basically, the app can be run by executing `python3 app.py`
 * The first time you run the app, you will need to update the mongo database 
 with fruits and facts to render for the homepage.
 * Running the **database updater** module as explained below, will ensure that it is populated
@@ -34,10 +33,12 @@ the fact and fruit models saved here: [src/models](https://github.com/Kremzeeq/f
 
 ## Deploying web application to remote Ubuntu virtual machine e.g. EC2 instance
 
-This entails X sections:
+This entails 4 sections:
 
-1. Setting up the basics: Installing modules required for the hosted project
-2. 
+1. [Setting up the basics](https://github.com/Kremzeeq/fruit_app_project#section-1-setting-up-the-basics)
+2. [Setting up credentials for the mongo database](https://github.com/Kremzeeq/fruit_app_project#section-2-setting-up-credentials-for-the-mongo-database)
+3. [Exporting variables and running the Flask app](https://github.com/Kremzeeq/fruit_app_project#section-3-export-variables-and-run-flask-app)
+4. [Stopping Instances](https://github.com/Kremzeeq/fruit_app_project#section-3-export-variables-and-run-flask-app)
 
 ### Section 1: Setting up the basics
 
@@ -45,11 +46,11 @@ This entails X sections:
 
 `sudo apt-get update`
 
-2.Next, clone the git hub project:
+2. Next, clone the git hub project:
 
 `git clone https://github.com/Kremzeeq/fruit_app_project.git`
 
-3. Check for python3 version:
+3. Check for python3 version. This project has been developed using Python 3.7.5:
 
 `python3 -v`
 
@@ -92,7 +93,7 @@ More information on MongoDB access privileges can be found [here](https://studio
 
 `db.createUser({user: "admin", pwd: "adminUser123", roles: [{role: "userAdminAnyDatabase", db: "admin"}]})`
 
-**Please Note** : Please provide username and password as per preferences. MongoDB encrypts the password within the database.
+**NB** : Please provide username and password as per preferences. MongoDB encrypts the password within the database.
 
 5. Press `Ctrl+C` to quit the instances in terminals 1 and 2
 
@@ -116,9 +117,9 @@ read and written to using the fruit_app_user credentials in another instance:
 
 `mongo --port 27017 -u "fruit_app_user" -p "fruit123" --authenticationDatabase "celebration_of_fruit_production"`
 
-*Please note* : Remember to quite the mongo and mongod instances with `Ctrl+C`
+*NB* : Remember to quit the mongo and mongod instances with `Ctrl+C`
 
-## Section 3: Export variables and run Flask app
+## Section 3: Exporting variables and running the Flask app
 
 The config file requires for some variables to be exported within the command line. 
 Please ensure this is done from within the src directory from where app.py will be run...
@@ -155,19 +156,19 @@ This creates a nohup.out file in the home directory. The & helps free up the ter
 
 `python3 app.py`
 
-**Please note** : the waitress module is used within app.py to serve the application for production purposes. 
+**NB** : The waitress module is used within app.py to serve the application for production purposes. 
 This is to overcome the warning: "WARNING: This is a development server. Do not use it in a production deployment.
 Use a production WSGI server instead." Basically, waitress functions as a WSGI server. More info can be found 
 [here](https://stackoverflow.com/questions/51025893/flask-at-first-run-do-not-use-the-development-server-in-a-production-environmen)
 
-7. we can check the instance is running by pasting the IPV4 public IP e.g. 35.154.90.20 in the browser with 
+7. We can check the instance is running by pasting the IPV4 public IP e.g. 35.154.90.20 in the browser with 
 the port number e.g. 8080
 
 `http://35.154.90.20:8080/`
 
 Running the application for the first time, will populate the database with information on fruit and facts. 
 
-8. Now, stop the flask instance. Execute the following to list system processes:
+8. Now, let's stop the flask instance. Execute the following to list system processes:
 
 `sudo netstat -lp`
 
@@ -185,10 +186,10 @@ This is so the database will not be updated every time the application is run.
 
 `sudo nano config.py`
 
-11. Now the the application can be run as a background process with '&'. 
+11. Now the the application can be run as a background process with 'nohup' and '&'. 
 This is so the web application will still be available via the web, even if the terminal is closed:
 
-`flask run &`
+`nohup python3 app.py &`
 
 12. Time to check the instance is running again! This is regard to details as explained in step 7. 
 
@@ -201,4 +202,4 @@ as background processes:
 
 `sudo netstat -lp`
 
-The program numbers can be identified and killed by a similar process as explained in steps 7 and 8 in Section 3. 
+The program numbers can be identified and killed by a similar process as explained in steps 8 and 9 in Section 3. 
