@@ -184,9 +184,12 @@ This is so the database will not be updated every time the application is run.
 10. Now the the application can be run as a background process. 
 This is so the web application will still be available via the web, even if the terminal is closed:
 
-`nohup flask run`
+`flask run &`
 
-7. Finally, we can check the instance is running by pasting the IPV4 public IP e.g. 35.154.90.20 in the browser.
+7. Finally, we can check the instance is running by pasting the IPV4 public IP e.g. 35.154.90.20 in the browser with 
+the port number e.g. 8080
+
+`http://35.154.90.20:8080/`
 
 ## Section 4: Stopping instances
 
