@@ -155,6 +155,12 @@ This creates a nohup.out file in the home directory. The & helps free up the ter
 
 `python3 app.py`
 
+**Please note** : the waitress module is used within app.py to serve the application for production purposes. 
+This is to overcome the warning: "WARNING: This is a development server. Do not use it in a production deployment.
+Use a production WSGI server instead." Basically, waitress functions as a WSGI server. More info can be found 
+[here](https://stackoverflow.com/questions/51025893/flask-at-first-run-do-not-use-the-development-server-in-a-production-environmen)
+
+
 Running the application for the first time, will populate the database with information on fruit and facts. 
 
 7. Now, stop the flask instance. Execute the following to list system processes:

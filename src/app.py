@@ -5,6 +5,7 @@ from models.fact import Fact
 from database_updater import DatabaseUpdater
 import config
 import os
+from waitress import serve
 
 app = Flask(__name__)
 
@@ -62,4 +63,4 @@ def home_template():
 
 
 if __name__ == '__main__':
-    app.run(host=HOST, port=RUN_PORT)
+    serve(app.run(host=HOST, port=RUN_PORT))
