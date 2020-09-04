@@ -3,6 +3,7 @@ from src.common.database import Database
 from src.models.fruit import Fruit
 from src.models.fact import Fact
 from src.database_updater import DatabaseUpdater
+import os
 
 app = Flask(__name__)
 
@@ -29,6 +30,10 @@ DB_PASSWORD = app.config["DB_PASSWORD"]
 DB_SERVER = app.config["DB_SERVER"]
 DATABASE_URI = get_database_uri(DB_USERNAME, DB_PASSWORD, DB_SERVER, DB_NAME)
 
+
+HOST = app.config["HOST"]
+RUN_PORT = app.config["RUN_PORT"]
+
 UPDATE_FRUIT_AND_FACTS = app.config["UPDATE_FRUIT_AND_FACTS"]
 
 
@@ -51,6 +56,6 @@ def home_template():
         facts.append(fact)
     return render_template('home.html', fruits=fruits, facts=facts)
 
+
 if __name__ == '__main__':
-    app.run()
-    #app.run(port=5001)
+    app.run(host=HOST, port=RUN_PORT)

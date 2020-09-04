@@ -23,7 +23,7 @@ with fruits and facts to render for the homepage.
 ### 2. [src/database_updater.py](https://github.com/Kremzeeq/fruit_app_project/blob/master/src/database.updater.py)
 
 * This app will automatically run from app.py, so long as `UPDATE_FRUIT_AND_FACTS = True` is so in the config file.
-* This can be set to False is updating the database is not required 
+* This can be set to False if updating the database is not required 
 * When executed, this module reads a CSV from [src/static/data_source/fruit.csv](https://github.com/Kremzeeq/fruit_app_project/blob/master/src/static/data_source/fruit.csv).
 * The CSV contains tabular information for fruits and facts.
 * This information is split between different pandas dataframes.
@@ -33,6 +33,13 @@ the fact and fruit models saved here: [src/models](https://github.com/Kremzeeq/f
 
 
 ## Deploying web application to remote Ubuntu virtual machine e.g. EC2 instance
+
+This entails X sections:
+
+1. Setting up the basics: Installing modules required for the hosted project
+2. 
+
+### Section 1: Setting up the basics
 
 1. Once E2 instance is up and running, update the system:
 
@@ -57,23 +64,133 @@ from within ~/fruit_app_project$:
 
 6. Ensure to install mongo. Official instructions from mongo db can be found [here](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/)
 
-7. Credentials should be set up for an admin user in mongo...
+### Section 2: Setting up credentials for the mongo database
 
-8. As the admin user we have just created, we set up another user with readWrite privileges for using the
-production version of the celebration_of_fruit database as per the [src/config.py] file. Please provide 
-user and password login credentials as per preferences: 
+This section is adapted from [@balasubramanim's hackermoon article](https://www.hackernoon.com/how-to-install-and-secure-mongodb-in-amazon-ec2-in-minutes-90184283b0a1).
+The purpose of this is to secure the MongoDB instance for the application.
 
-**Please note** The login credentials are not hard-coded within mongo for security purposes. 
+1. Create the path for storing the database data and set permission so yourself as a user can access it. 
+Let's call this terminal -'terminal 1':
 
-9. Next the config file requires that three variables are exported within the command line. 
+`sudo mkdir -p /data/db`
+`sudo chown $USER /data/db`
+
+2. In another terminal - 'terminal 2' for the EC2 instance, start the mongod instance:
+
+`mongod --port 27017 --dbpath /data/db`
+
+3. In terminal 1, start up the Mongo shell, use the admin database
+
+`mongo --port 27017`
+`use admin`
+
+4. Now, we can create an admin user with the userAdminAnyDatabase role. 
+This permission means that the admin can create and modify users and roles for 
+any database available on the port. 
+More information on MongoDB access privileges can be found [here](https://studio3t.com/knowledge-base/articles/mongodb-users-roles-explained-part-1/)
+
+
+`db.createUser({user: "admin", pwd: "adminUser123", roles: [{role: "userAdminAnyDatabase", db: "admin"}]})`
+
+**Please Note** : Please provide username and password as per preferences. MongoDB encrypts the password within the database.
+
+5. Press `Ctrl+C` to quit the instances in terminals 1 and 2
+
+6. In terminal 1, restart the mongod instance with the --auth command:
+
+`mongod --auth --port 27017 --dbpath /data/db`
+
+7. In terminal 2, access the mongo instance with the admin login details:
+
+`mongo --port 27017 -u "admin" -p "adminUser123" --authenticationDatabase "admin"` 
+
+8. The next step is to create a user with readWrite privileges for the production database, noted as 
+'celebration_of_fruit_production' in the config file. Again, set up the fruit_app_user credentials as seen fit
+and note the username and password will be required later:
+
+`use celebration_of_fruit_production`
+`db.createUser({user: "fruit_app_user", pwd: "fruit123"`, roles: [{role: "readWrite", db: "celebration_of_fruit_production"}]})`
+
+9. Please note the 'celebration_of_fruit_production' database can be directly
+read and written to using the fruit_app_user credentials in another instance:
+
+`mongo --port 27017 -u "fruit_app_user" -p "fruit123" --authenticationDatabase "celebration_of_fruit_production"`
+
+*Please note* : Remember to quite the mongo and mongod instances with `Ctrl+C`
+
+## Section 3: Export variables and run Flask app
+
+The config file requires for some variables to be exported within the command line. 
 Please ensure this is done from within the src directory from where app.py will be run...
 
-- Username, password, PRODUCTION_DB_SERVER
+1. First, let's export the fruit_app_user credentials
 
-10. Next, the app can be run with `flask run`
+`export FRUIT_APP_DB_USERNAME=fruit_app_user`
+`export FRUIT_APP_DB_PASSWORD=fruit123`
 
+2. Now let's export the FLASK_ENV and FLASK_RUN_PORT variables for production:
 
+`export FLASK_ENV=production`
+`export FLASK_RUN_PORT=8080`
+`export FLASK_RUN_HOST=0.0.0.0`
 
+*Please note * : Setting the Port and Host in the config file doesn't seem to work with executing `flask run` 
+so we export this as a work-around. The default port is 5000. There are some ideas from the stackoverflow 
+community around this [here](https://stackoverflow.com/questions/20212894/how-do-i-get-flask-to-run-on-port-80)
 
+2. In the AWS EC2 console, select the fruit_app instance and 
+select the launch wizard listed under Security groups:
 
+![launch wizard](src/static/assets/base_images/launch_wizard.png "launch wizard")
 
+3. Within the Security Groups pane, select 'edit inbound rules':
+
+![edit_inbound rules](src/static/assets/base_images/edit_inbound_rules.png "edit inbound rules")
+
+4. Add an inbound rule for Custom TCP, with a Port Range of 8080 and set the host to 0.0.0.0/0 (as the connection is only IP4):
+
+![edit_inbound rules](src/static/assets/base_images/edit_inbound_rules2.png "edit inbound rules")
+
+5. In the EC2 instance, from the src directory, execute the following to run the mongo db instance as a background process:
+
+`nohup mongod --port 27017`
+
+6. In a separate terminal from the src location, the python Flask application can also be run:
+
+`flask run`
+
+Running the application for the first time, will populate the database with information on fruit and facts. 
+
+7. Now, stop the flask instance. Execute the following to list system processes:
+
+`sudo netstat -lp`
+
+This will show information for many applications, including python, such as in the example below:
+
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name             
+tcp        2      0 localhost:5000          0.0.0.0:*               LISTEN      15726/python
+
+8. Considering the PID number above as 15726, the following command can be executed:
+
+`sudo kill -9 15726`
+
+9. In the src directory, edit the config file so UPDATE_FRUIT_AND_FACTS is set to FALSE. 
+This is so the database will not be updated every time the application is run. 
+
+`sudo nano config.py`
+
+10. Now the the application can be run as a background process. 
+This is so the web application will still be available via the web, even if the terminal is closed:
+
+`nohup flask run`
+
+7. Finally, we can check the instance is running by pasting the IPV4 public IP e.g. 35.154.90.20 in the browser.
+
+## Section 4: Stopping instances
+
+Whilst the EC2 instance can be stopped via the AWS console, the following command can help identify processes running 
+as background processes:
+
+`sudo netstat -lp`
+
+The program numbers can be identified and killed by a similar process as explained in steps 7 and 8 in Section 3. 

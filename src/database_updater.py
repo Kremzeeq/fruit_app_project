@@ -21,7 +21,9 @@ class DatabaseUpdater():
         self.db_instance = db_instance
 
     def execute(self):
-        self.delete_collections_in_db()
+        self.get_db_name()
+        if self.check_if_fruit_in_db():
+            self.delete_collections_in_db()
         if self.execute_fruit_section():
             if self.execute_fact_section():
                 self.final_notifcations()
@@ -30,12 +32,19 @@ class DatabaseUpdater():
         print("Initialized database:", self.db_instance.name)
         return self.db_instance.name
 
-    def delete_collections_in_db(self):
+    def check_if_fruit_in_db(self):
         collection_names = self.db_instance.list_collection_names()
-        print("Here are existing collections:", collection_names)
-        for collection in collection_names:
+        if 'fruits' in collection_names:
+            return True
+
+    def delete_collections_in_db(self):
+        """
+        Delete the fruit and facts collections but not all the collections
+        as it will remove the admin assigned to the database
+        """
+        collections = ['fruits', 'facts']
+        for collection in collections:
             self.db_instance.drop_collection(collection)
-            print("Dropped collection:", collection)
         return True
 
 
