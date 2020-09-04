@@ -110,7 +110,7 @@ More information on MongoDB access privileges can be found [here](https://studio
 and note the username and password will be required later:
 
 `use celebration_of_fruit_production`
-`db.createUser({user: "fruit_app_user", pwd: "fruit123"`, roles: [{role: "readWrite", db: "celebration_of_fruit_production"}]})`
+`db.createUser({user: "fruit_app_user", pwd: "fruit123", roles: [{role: "readWrite", db: "celebration_of_fruit_production"}]})`
 
 9. Please note the 'celebration_of_fruit_production' database can be directly
 read and written to using the fruit_app_user credentials in another instance:
