@@ -12,7 +12,8 @@
 
     function initHeader() {
         width = window.innerWidth;
-        height = window.innerHeight/2.75;
+        //height = window.innerHeight/2.75;
+        height = 150;
         target = {x: 0, y: height};
 
         largeContainer = document.getElementById('top-section');
@@ -45,7 +46,8 @@
 
     function resize() {
         width = window.innerWidth;
-        height = window.innerHeight/2.75;
+        //height = window.innerHeight/2.75;
+        height = 150;
         largeContainer.style.height = height+'px';
         canvas.width = width;
         canvas.height = height;
