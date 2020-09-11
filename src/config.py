@@ -10,7 +10,7 @@ class Config(object):
     DB_SERVER = 'localhost'
     DB_USERNAME = os.environ.get("FRUIT_APP_DB_USERNAME")
     DB_PASSWORD = os.environ.get("FRUIT_APP_DB_PASSWORD")
-    UPDATE_FRUIT_AND_FACTS = True
+    UPDATE_FRUIT_AND_FACTS = os.environ.get("UPDATE_FRUIT_AND_FACTS")
     HOST = "0.0.0.0"
     RUN_PORT = 8080
     DB_NAME = 'celebration_of_fruit_production'

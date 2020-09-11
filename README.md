@@ -148,10 +148,12 @@ export FRUIT_APP_DB_USERNAME=fruit_app_user
 export FRUIT_APP_DB_PASSWORD=fruit123
 ```
 
-2. Now let's export the FLASK_ENV variable for production:
+2. Now let's export the FLASK_ENV variable for production. Also, let's set UPDATE_FRUIT_AND_FACTS to true 
+so the the database is updated with information on fruits and facts as required by the front-end. :
 
 ```
 export FLASK_ENV=production
+export UPDATE_FRUIT_AND_FACTS=True
 ```
 
 2. In the AWS EC2 console, select the fruit_app instance and 
@@ -214,11 +216,11 @@ tcp        2      0 localhost:5000          0.0.0.0:*               LISTEN      
 sudo kill -9 15726
 ```
 
-10. In the src directory, edit the config file so UPDATE_FRUIT_AND_FACTS is set to FALSE. 
+10. Within the command line, update the variable UPDATE_FRUIT_AND_FACTS so is set to FALSE. 
 This is so the database will not be updated every time the application is run. 
 
 ```
-sudo nano config.py
+export UPDATE_FRUIT_AND_FACTS=False
 ```
 
 11. Now the the application can be run as a background process with 'nohup' and '&'. 
