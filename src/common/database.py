@@ -11,6 +11,15 @@ class Database(object):
         return Database.DATABASE
 
     @staticmethod
+    def ping_client(database_uri):
+        """
+        An exception ServerSelectionTimeoutError is shown when the port string and domain are settings are wrong.
+        """
+        client = MongoClient(database_uri)
+        return client.server_info()
+
+
+    @staticmethod
     def drop_collection(collection):
         Database.DATABASE[collection].drop()
 
