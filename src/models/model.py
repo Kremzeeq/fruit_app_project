@@ -9,7 +9,8 @@ class Model(metaclass=ABCMeta):
         pass
 
     def save_to_mongo(self):
-        Database.insert(self.collection, self.json())
+        #Database.insert(self.collection, self.json()) <- deprecated
+        Database.insert_one(self.collection, self.json())
 
     def update_mongo(self):
         Database.update(self.collection,
