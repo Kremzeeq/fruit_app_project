@@ -1,4 +1,3 @@
-
 import os
 
 
@@ -15,8 +14,10 @@ class Config(object):
     RUN_PORT = 8080
     DB_NAME = 'celebration_of_fruit_production'
 
+
 class ProductionConfig(Config):
     pass
+
 
 class DevelopmentConfig(Config):
     DEBUG = True

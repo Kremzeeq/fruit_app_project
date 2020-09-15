@@ -1,8 +1,10 @@
 import uuid
 from .model import Model
 
+
 class Fruit(Model):
     collection = 'fruits'
+
     def __init__(self, **kwargs):
         super().__init__()
         """
@@ -29,5 +31,3 @@ class Fruit(Model):
                 "image_source": self.image_source,
                 "_id": self._id
                 }
-
-

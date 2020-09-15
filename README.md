@@ -38,7 +38,8 @@ This entails 4 sections:
 1. [Setting up the basics](https://github.com/Kremzeeq/fruit_app_project#section-1-setting-up-the-basics)
 2. [Setting up credentials for the mongo database](https://github.com/Kremzeeq/fruit_app_project#section-2-setting-up-credentials-for-the-mongo-database)
 3. [Exporting variables and running the Flask app](https://github.com/Kremzeeq/fruit_app_project#section-3-export-variables-and-run-flask-app)
-4. [Stopping Instances](https://github.com/Kremzeeq/fruit_app_project#section-3-export-variables-and-run-flask-app)
+4. [Stopping Instances](https://github.com/Kremzeeq/fruit_app_project#section-4-stopping-instances)
+5. [Running Tests](https://github.com/Kremzeeq/fruit_app_project#section-5-running-tests)
 
 ### Section 1: Setting up the basics
 
@@ -134,7 +135,7 @@ read and written to using the fruit_app_user credentials in another instance:
 mongo --port 27017 -u "fruit_app_user" -p "fruit123" --authenticationDatabase "celebration_of_fruit_production"
 ```
 
-*NB* : Remember to quit the mongo and mongod instances with `Ctrl+C`
+**NB** : Remember to quit the mongo and mongod instances with `Ctrl+C`
 
 ## Section 3: Exporting variables and running the Flask app
 
@@ -245,4 +246,26 @@ as background processes:
 sudo netstat -lp
 ```
 
-The program numbers can be identified and killed by a similar process as explained in steps 8 and 9 in Section 3. 
+The program numbers can be identified and killed by a similar process as explained in steps 8 and 9 in Section 3.
+
+## Section 5: Running tests
+
+This project comprises of 16 tests, which ideally should be run, prior to running the app.
+Tests are available here: [src/tests.py](https://github.com/Kremzeeq/fruit_app_project/blob/master/src/tests.py)
+Here are steps for executing the tests file:
+
+1. Within the src directory, please ensure to export the PYTHONPATH:
+
+```
+export PYTHONPATH=`pwd`
+```
+
+2. Run pytest within the command line:
+
+```
+pytest -vs tests.py
+```
+
+**NB** : Tests can be improved to be more modular and split into classes,
+though this has proved challenging with monkeypatch fixtures. 
+Teardown functionality for using the mock mongoDB instances should be explored.

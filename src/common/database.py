@@ -6,7 +6,6 @@ class Database(object):
     @staticmethod
     def initialize(database_uri, db_name):
         client = MongoClient(database_uri)
-        # old port 27017
         Database.DATABASE = client[db_name]
         return Database.DATABASE
 
@@ -18,14 +17,13 @@ class Database(object):
         client = MongoClient(database_uri)
         return client.server_info()
 
-
     @staticmethod
     def drop_collection(collection):
         Database.DATABASE[collection].drop()
 
     @staticmethod
-    def insert(collection, data):
-        Database.DATABASE[collection].insert(data)
+    def insert_one(collection, data):
+        Database.DATABASE[collection].insert_one(data)
 
     @staticmethod
     def update(collection, query, data):
@@ -57,6 +55,4 @@ class Database(object):
 
     @staticmethod
     def find_random(collection, sample_size):
-        return Database.DATABASE[collection].aggregate([{"$sample":{"size": sample_size}}])
-
-
+        return Database.DATABASE[collection].aggregate([{"$sample": {"size": sample_size}}])

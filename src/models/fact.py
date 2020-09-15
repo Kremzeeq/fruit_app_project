@@ -1,8 +1,10 @@
 import uuid
 from .model import Model
 
+
 class Fact(Model):
     collection = 'facts'
+
     def __init__(self, **kwargs):
         super().__init__()
         """
@@ -27,4 +29,3 @@ class Fact(Model):
                 "fruit_id": self.fruit_id,
                 "_id": self._id
                 }
-

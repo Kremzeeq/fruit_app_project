@@ -4,7 +4,7 @@ import pandas as pd
 import json
 
 
-class DatabaseUpdater():
+class DatabaseUpdater:
     """
     This class reads a CSV from the fruit_csv_path location
     and converts this to a pandas dataframe.
@@ -14,6 +14,7 @@ class DatabaseUpdater():
     by the fact and fruit models saved here: src/models
     They are then saved to the database.
     """
+
     def __init__(self, fruit_csv_path, db_instance):
         self.fruit_csv_path = fruit_csv_path
         self.df = pd.read_csv(self.fruit_csv_path, engine='python')
@@ -46,7 +47,6 @@ class DatabaseUpdater():
             self.db_instance.drop_collection(collection)
         return True
 
-
     def execute_fruit_section(self):
         fruit_df = self.get_fruit_df()
         return self.insert_fruit_jsons_in_db(fruit_df)
@@ -54,7 +54,6 @@ class DatabaseUpdater():
     def execute_fact_section(self):
         fact_df = self.get_fact_df()
         return self.insert_fact_jsons_in_db(fact_df)
-
 
     def get_fruit_df(self):
         """
@@ -66,11 +65,14 @@ class DatabaseUpdater():
         return fruit_df
 
     def insert_fruit_jsons_in_db(self, fruit_df):
-            list_of_fruit_jsons = json.loads(fruit_df.to_json(orient="records"))
+        list_of_fruit_jsons = json.loads(fruit_df.to_json(orient="records"))
+        result = self.validate_json_keys(list_of_fruit_jsons[0], Fruit)
+        if result == True:
             print("Writing Fruit collection to database")
             try:
                 for fruit_json in list_of_fruit_jsons:
                     fruit = Fruit(**fruit_json)
+
                     fruit.save_to_mongo()
                 print("Fruit collection written to database")
                 return True
@@ -78,6 +80,15 @@ class DatabaseUpdater():
                 print("Problem writing fruit collection to database")
                 print("Error:", e)
                 return False
+        return False
+
+    def validate_json_keys(self, json_dict, model):
+        model_instance = model(**json_dict)
+        for k in json_dict.keys():
+            if k not in model_instance.json().keys():
+                print("json_dict keys do not match the model")
+                return False
+        return True
 
     def get_fact_df(self):
         """
@@ -88,7 +99,7 @@ class DatabaseUpdater():
         fact_df_p2 = self.df[['Name', 'Fact', 'Source']].copy()
         fact_df_p2['Fact'].rename('Question', inplace=True)
 
-        fact_df_p2.rename(columns = {'Fact':'Question'}, inplace=True)
+        fact_df_p2.rename(columns={'Fact': 'Question'}, inplace=True)
         fact_df_p2['Answer'] = True
         fact_df = pd.concat([fact_df_p1, fact_df_p2])
         fact_df.columns = ['fruit_name', 'fact_text', 'fact_true', 'fact_source']
@@ -96,21 +107,24 @@ class DatabaseUpdater():
 
     def insert_fact_jsons_in_db(self, fact_df):
         list_of_fact_jsons = json.loads(fact_df.to_json(orient="records"))
-        print("Writing Fact collection to database")
-        try:
-            for fact_json in list_of_fact_jsons:
-                fruit_name = fact_json['fruit_name']
-                fruit = Fruit.find_one_by('fruit_name', fruit_name)
-                fruit_id = fruit._id
-                fact_json['fruit_id'] = fruit_id
-                fact = Fact(**fact_json)
-                fact.save_to_mongo()
-            print("Fact collection written to database")
-            return True
-        except Exception as e:
-            print("Problem writing fact collection to database")
-            print("Error:", e)
-            return False
+        result = self.validate_json_keys(list_of_fact_jsons[0], Fact)
+        if result == True:
+            print("Writing Fact collection to database")
+            try:
+                for fact_json in list_of_fact_jsons:
+                    fruit_name = fact_json['fruit_name']
+                    fruit = Fruit.find_one_by('fruit_name', fruit_name)
+                    fruit_id = fruit._id
+                    fact_json['fruit_id'] = fruit_id
+                    fact = Fact(**fact_json)
+                    fact.save_to_mongo()
+                print("Fact collection written to database")
+                return True
+            except Exception as e:
+                print("Problem writing fact collection to database")
+                print("Error:", e)
+                return False
+        return False
 
     def final_notifcations(self):
         print("Database update complete")
@@ -118,4 +132,3 @@ class DatabaseUpdater():
         print("Afterwards app.py can be run to overwrite the database collections \n"
               "for the database configured for the project.\n"
               "This is as long as UPDATE_FRUIT_AND_FACTS is set to True in the command line")
-
