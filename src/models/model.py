@@ -1,7 +1,6 @@
 from abc import ABCMeta, abstractmethod
 from common.database import Database
 
-
 class Model(metaclass=ABCMeta):
     collection: str
     _id: str
@@ -10,7 +9,7 @@ class Model(metaclass=ABCMeta):
         pass
 
     def save_to_mongo(self):
-        Database.insert_one(self.collection, self.json())
+        Database.insert(self.collection, self.json())
 
     def update_mongo(self):
         Database.update(self.collection,
@@ -35,7 +34,7 @@ class Model(metaclass=ABCMeta):
 
     @classmethod
     def find_one_by(cls, attribute, value):
-        return cls(**Database.find_one(cls.collection, {attribute: value}))
+        return cls(**Database.find_one(cls.collection, {attribute:value}))
 
     @classmethod
     def find_one_by_using_query(cls, query):
@@ -43,7 +42,7 @@ class Model(metaclass=ABCMeta):
 
     @classmethod
     def find_many_by(cls, attribute, value):
-        return [cls(*elem) for elem in Database.find(cls.collection, {attribute: value})]
+        return [cls(*elem) for elem in Database.find(cls.collection, {attribute:value})]
 
     def find_multiple(cls, query):
         return Database.find(cls.collection, query)

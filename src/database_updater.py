@@ -66,7 +66,7 @@ class DatabaseUpdater:
 
     def insert_fruit_jsons_in_db(self, fruit_df):
         list_of_fruit_jsons = json.loads(fruit_df.to_json(orient="records"))
-        result = self.validate_json_keys(list_of_fruit_jsons[0], Fruit)
+        result = self.validate_fruit_json_keys(list_of_fruit_jsons[0])
         if result == True:
             print("Writing Fruit collection to database")
             try:
@@ -82,11 +82,11 @@ class DatabaseUpdater:
                 return False
         return False
 
-    def validate_json_keys(self, json_dict, model):
-        model_instance = model(**json_dict)
+    def validate_fruit_json_keys(self, json_dict):
+        fruit = Fruit(**json_dict)
         for k in json_dict.keys():
-            if k not in model_instance.json().keys():
-                print("json_dict keys do not match the model")
+            if k not in fruit.json().keys():
+                print("json_dict keys do not match the fruit model")
                 return False
         return True
 
@@ -107,7 +107,7 @@ class DatabaseUpdater:
 
     def insert_fact_jsons_in_db(self, fact_df):
         list_of_fact_jsons = json.loads(fact_df.to_json(orient="records"))
-        result = self.validate_json_keys(list_of_fact_jsons[0], Fact)
+        result = self.validate_fact_json_keys(list_of_fact_jsons[0])
         if result == True:
             print("Writing Fact collection to database")
             try:
@@ -125,6 +125,16 @@ class DatabaseUpdater:
                 print("Error:", e)
                 return False
         return False
+
+    def validate_fact_json_keys(self, json_dict):
+        model_instance = Fact(**json_dict)
+        for k in json_dict.keys():
+            if k == 'fruit_name':
+                pass
+            elif k not in model_instance.json().keys():
+                print("json_dict keys do not match the fact model")
+                return False
+        return True
 
     def final_notifcations(self):
         print("Database update complete")

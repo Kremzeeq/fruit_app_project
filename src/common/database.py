@@ -17,9 +17,14 @@ class Database(object):
         client = MongoClient(database_uri)
         return client.server_info()
 
+
     @staticmethod
     def drop_collection(collection):
         Database.DATABASE[collection].drop()
+
+    @staticmethod
+    def insert(collection, data):
+        Database.DATABASE[collection].insert(data)
 
     @staticmethod
     def insert_one(collection, data):
@@ -55,4 +60,4 @@ class Database(object):
 
     @staticmethod
     def find_random(collection, sample_size):
-        return Database.DATABASE[collection].aggregate([{"$sample": {"size": sample_size}}])
+        return Database.DATABASE[collection].aggregate([{"$sample":{"size": sample_size}}])
