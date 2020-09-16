@@ -246,14 +246,14 @@ This is so the database will not be updated every time the application is run.
 export UPDATE_FRUIT_AND_FACTS=False
 ```
 
-11. Now the the application can be run as a background process with 'nohup' and '&'. 
+14. Now the the application can be run as a background process with 'nohup' and '&'. 
 This is so the web application will still be available via the web, even if the terminal is closed:
 
 ```
 nohup python3 app.py &
 ```
 
-14. Time to check the instance is running again! This is regard to details as explained in step 7. 
+15. Time to check the instance is running again! This is regard to details as explained in step 7. 
 
 ```
 http://35.154.90.20:8080/
