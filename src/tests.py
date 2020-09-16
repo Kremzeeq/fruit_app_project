@@ -7,11 +7,6 @@ from common.database import Database
 from database_updater import DatabaseUpdater
 
 
-# export PYTHONPATH=`pwd` in src
-# we also need a new terminal instance so that env variables set to the command line are not considered for tests
-# pytest -vs tests.py
-
-
 def app_mode_tester(monkeypatch, flask_env_parameter, config_env_set):
     fruit_app_maker = app.FruitAppMaker()
     monkeypatch.setenv("FLASK_ENV", flask_env_parameter)
