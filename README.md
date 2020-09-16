@@ -7,6 +7,8 @@
 This web application renders a homepage with a Bootstrap carousel of 5 random fruit 
 and related facts.
 
+The deployed web app is available [here](https://bit.ly/3m84nbs)
+
 ### There are 2 key modules to this project:
 
 ### 1. [src/app.py](https://github.com/Kremzeeq/fruit_app_project/blob/master/src/app.py)
