@@ -170,15 +170,37 @@ select the launch wizard listed under Security groups:
 
 ![edit_inbound rules](src/static/assets/base_images/edit_inbound_rules2.png "edit inbound rules")
 
-5. In the EC2 instance, from the src directory, execute the following to run the mongo db instance as a background process:
+5. In the EC2 instance, in the src directory, we need to copy the mongodb.service file to a system
+directory. This helps ensure the mongodb service is available when terminals are closed:
 
 ```
-nohup mongod --port 27017 &
+sudo cp  mongodb.service /etc/systemd/system
 ```
 
-This creates a nohup.out file in the home directory. The & helps free up the terminal you are typing in.
+**NB** : [devdungeon](https://www.devdungeon.com/content/creating-systemd-service-files) provides guidance on 
+creating systemd service files. 
 
-6. In a separate terminal from the src location, the python Flask application can also be run:
+6. Next, permissions should be set to the root user for the mongodb.service file:
+
+```
+ls -l /etc/systemd/system/mongodb.service
+sudo chown root:root /etc/systemd/system/mongodb.service 
+```
+
+7. The mongod instance can be started and checked with systemctl:
+
+```
+sudo systemctl start mongodb
+sudo systemctl status mongodb
+```
+
+8. The following ensures mongodb will start during boot:
+
+```
+sudo systemctl enable mongodb
+```
+
+9. In a separate terminal from the src location, the python Flask application can also be run:
 
 ```
 python3 app.py
@@ -189,7 +211,7 @@ This is to overcome the warning: "WARNING: This is a development server. Do not 
 Use a production WSGI server instead." Basically, waitress functions as a WSGI server. More info can be found 
 [here](https://stackoverflow.com/questions/51025893/flask-at-first-run-do-not-use-the-development-server-in-a-production-environmen)
 
-7. We can check the instance is running by pasting the IPV4 public IP e.g. 35.154.90.20 in the browser with 
+10. We can check the instance is running by pasting the IPV4 public IP e.g. 35.154.90.20 in the browser with 
 the port number e.g. 8080
 
 ```
@@ -198,7 +220,7 @@ http://35.154.90.20:8080/
 
 Running the application for the first time, will populate the database with information on fruit and facts. 
 
-8. Now, let's stop the flask instance. Execute the following to list system processes:
+11. Now, let's stop the flask instance. Execute the following to list system processes:
 
 ```
 sudo netstat -lp
@@ -211,13 +233,13 @@ Proto Recv-Q Send-Q Local Address           Foreign Address         State       
 tcp        2      0 localhost:5000          0.0.0.0:*               LISTEN      15726/python
 ```
 
-9. Considering the PID number above as 15726, the following command can be executed:
+12. Considering the PID number above as 15726, the following command can be executed:
 
 ```
 sudo kill -9 15726
 ```
 
-10. Within the command line, update the variable UPDATE_FRUIT_AND_FACTS so is set to FALSE. 
+13. Within the command line, update the variable UPDATE_FRUIT_AND_FACTS so is set to FALSE. 
 This is so the database will not be updated every time the application is run. 
 
 ```
@@ -231,7 +253,7 @@ This is so the web application will still be available via the web, even if the 
 nohup python3 app.py &
 ```
 
-12. Time to check the instance is running again! This is regard to details as explained in step 7. 
+14. Time to check the instance is running again! This is regard to details as explained in step 7. 
 
 ```
 http://35.154.90.20:8080/
@@ -246,7 +268,7 @@ as background processes:
 sudo netstat -lp
 ```
 
-The program numbers can be identified and killed by a similar process as explained in steps 8 and 9 in Section 3.
+The program numbers can be identified and killed by a similar process as explained in steps 11 and 12 in Section 3.
 
 ## Section 5: Running tests
 
@@ -276,3 +298,6 @@ pytest -vs tests.py
 **NB** : Tests can be improved to be more modular and split into classes,
 though this has proved challenging with monkeypatch fixtures. 
 Teardown functionality for using the mock mongoDB instances should be explored.
+
+
+
