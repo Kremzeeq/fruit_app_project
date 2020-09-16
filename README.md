@@ -254,13 +254,20 @@ This project comprises of 16 tests, which ideally should be run, prior to runnin
 Tests are available here: [src/tests.py](https://github.com/Kremzeeq/fruit_app_project/blob/master/src/tests.py)
 Here are steps for executing the tests file:
 
-1. Within the src directory, please ensure to export the PYTHONPATH:
+1. Please ensure the mongod instance is active:
+
+```
+mongod --auth --port 27017
+```
+
+
+2. Within the src directory, please ensure to export the PYTHONPATH:
 
 ```
 export PYTHONPATH=`pwd`
 ```
 
-2. Run pytest within the command line:
+3. Run pytest within the command line:
 
 ```
 pytest -vs tests.py
