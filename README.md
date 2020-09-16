@@ -145,8 +145,8 @@ Please ensure this is done from within the src directory from where app.py will 
 1. First, let's export the fruit_app_user credentials
 
 ```
-export FRUIT_APP_DB_USERNAME=fruit_app_user
-export FRUIT_APP_DB_PASSWORD=fruit123
+export DB_USERNAME=fruit_app_user
+export DB_PASSWORD=fruit123
 ```
 
 2. Now let's export the FLASK_ENV variable for production. Also, let's set UPDATE_FRUIT_AND_FACTS to true 
